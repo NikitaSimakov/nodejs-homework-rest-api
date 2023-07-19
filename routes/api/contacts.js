@@ -6,8 +6,8 @@ import {
   postNewContact,
   updateContact,
   updateStatusContact,
-} from "../../controllers/controllers.js";
-import { isValidId } from "../../middlewares/IsValidId.js";
+} from "../../controllers/contact-controllers.js";
+import { isValidId } from "../../middlewares/isValidId.js";
 import { ctrlWrapper } from "../../decorators/ctrlWrapper.js";
 
 export const contactsRouter = express.Router();
