@@ -1,14 +1,13 @@
 import { HttpError } from "../helpers/HttpError.js";
-import { schemaAdd } from "../helpers/schema.js";
-import {
-  addContact,
-  getContactById,
-  listContacts,
-  removeContact,
-  updateContact,
-} from "../models/contacts.js";
+import { favoriteSchema, schemaAdd } from "../models/contact.js";
+// import {
+//   addContact,
+//   getContactById,
+//   listContacts,
+//   removeContact,
+//   updateContact,
+// } from "../models/contacts.js";
 import { Contact } from "../models/contact.js";
-import { Query } from "mongoose";
 
 export const getListContacts = async (req, res, next) => {
   try {
@@ -73,6 +72,21 @@ export const putContact = async (req, res, next) => {
     if (!newContact) throw HttpError(404, "Not found");
     console.log(newContact);
     return res.json(newContact);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateStatusContact = async (req, res, next) => {
+  const id = req.params.contactId;
+  console.log(req.body);
+  try {
+    const { error } = favoriteSchema.validate(req.body);
+    if (error) throw HttpError(400, "missing field favorite");
+    const updateStatus = await Contact.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
+    return res.json(updateStatus);
   } catch (error) {
     next(error);
   }
