@@ -4,19 +4,26 @@ import {
   getContact,
   getListContacts,
   postNewContact,
-  putContact,
-} from "../../controllers/controllers.js";
+  updateContact,
+  updateStatusContact,
+} from "../../controllers/contact-controllers.js";
+import { isValidId } from "../../middlewares/IsValidId.js";
+import { ctrlWrapper } from "../../decorators/ctrlWrapper.js";
 
 export const contactsRouter = express.Router();
 
-contactsRouter.get("/", getListContacts);
+contactsRouter.get("/", ctrlWrapper(getListContacts));
 
-contactsRouter.get("/:contactId", getContact);
+contactsRouter.get("/:contactId", isValidId, ctrlWrapper(getContact));
 
-contactsRouter.post("/", postNewContact);
+contactsRouter.post("/", ctrlWrapper(postNewContact));
 
-contactsRouter.delete("/:contactId", deleteContact);
+contactsRouter.delete("/:contactId", isValidId, ctrlWrapper(deleteContact));
 
-contactsRouter.put("/:contactId", putContact);
+contactsRouter.put("/:contactId", isValidId, ctrlWrapper(updateContact));
 
-// simakov hJ56BT8zt7chUBeV
+contactsRouter.patch(
+  "/:contactId/favorite",
+  isValidId,
+  ctrlWrapper(updateStatusContact)
+);
