@@ -17,14 +17,30 @@ export const contactsRouter = express.Router();
 
 contactsRouter.get("/", authenticate, ctrlWrapper(getListContacts));
 
-contactsRouter.get("/:contactId", isValidId, ctrlWrapper(getContact));
+contactsRouter.get(
+  "/:contactId",
+  authenticate,
+  isValidId,
+  ctrlWrapper(getContact)
+);
 
-contactsRouter.post("/", validateBody(schemaAdd), ctrlWrapper(postNewContact));
+contactsRouter.post(
+  "/",
+  authenticate,
+  validateBody(schemaAdd),
+  ctrlWrapper(postNewContact)
+);
 
-contactsRouter.delete("/:contactId", isValidId, ctrlWrapper(deleteContact));
+contactsRouter.delete(
+  "/:contactId",
+  authenticate,
+  isValidId,
+  ctrlWrapper(deleteContact)
+);
 
 contactsRouter.put(
   "/:contactId",
+  authenticate,
   isValidId,
   validateBody(schemaAdd),
   ctrlWrapper(updateContact)
@@ -32,6 +48,7 @@ contactsRouter.put(
 
 contactsRouter.patch(
   "/:contactId/favorite",
+  authenticate,
   isValidId,
   validateBody(favoriteSchema),
   ctrlWrapper(updateStatusContact)
