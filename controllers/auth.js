@@ -27,13 +27,14 @@ export const login = async (req, res) => {
   const user = await User.findOne({ email });
   if (!user) throw HttpError(401, "invalid email or password");
   //   const comparePassword = await bcrypt.compare(password, user.password);
-  const comparePassword = bcrypt.compare(password, user.password);
+  const comparePassword = await bcrypt.compare(password, user.password);
   if (!comparePassword) throw HttpError(401, "invalid email or password");
   const payload = {
     id: user._id,
   };
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "1d" });
   await User.findOneAndUpdate({ _id: user._id }, { token });
+  console.log(comparePassword);
   res.json({
     token,
     user: { email: user.email, subscription: user.subscription },
