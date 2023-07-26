@@ -14,7 +14,6 @@ export const register = async (req, res) => {
   if (user) throw HttpError(409, "email already in use");
   const hashPassword = await bcrypt.hash(password, 10);
   const newUser = await User.create({ ...req.body, password: hashPassword });
-  console.log(req.body);
   res.status(201).json({
     email: newUser.email,
     id: newUser._id,
@@ -34,7 +33,6 @@ export const login = async (req, res) => {
   };
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "1d" });
   await User.findOneAndUpdate({ _id: user._id }, { token });
-  console.log(comparePassword);
   res.json({
     token,
     user: { email: user.email, subscription: user.subscription },
@@ -46,4 +44,9 @@ export const logout = async (req, res) => {
   const user = await User.findByIdAndUpdate(_id, { token: null });
   if (!user) throw HttpError(401);
   res.status(204).end();
+};
+
+export const current = async (req, res) => {
+  const { email, subscription } = req.user;
+  res.json({ email, subscription });
 };
