@@ -34,5 +34,8 @@ export const login = async (req, res) => {
   };
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "1d" });
   await User.findOneAndUpdate({ _id: user._id }, { token });
-  res.json({ token });
+  res.json({
+    token,
+    user: { email: user.email, subscription: user.subscription },
+  });
 };
