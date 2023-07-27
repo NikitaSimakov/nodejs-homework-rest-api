@@ -1,6 +1,6 @@
 import express from "express";
 import { ctrlWrapper } from "../../decorators/ctrlWrapper.js";
-import { login, register, logout, current } from "../../controllers/auth.js";
+import { login, register, logout, getCurrent } from "../../controllers/auth.js";
 import { validateBody } from "../../middlewares/validateBody.js";
 import { loginSchema, registerSchema } from "../../models/users.js";
 import { handleMongooseError } from "../../helpers/handleMongooseError.js";
@@ -33,5 +33,5 @@ authRouter.get(
   "/current",
   handleMongooseError,
   authenticate,
-  ctrlWrapper(current)
+  ctrlWrapper(getCurrent)
 );

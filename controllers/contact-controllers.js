@@ -3,7 +3,11 @@ import { favoriteSchema, schemaAdd } from "../models/contact.js";
 import { Contact } from "../models/contact.js";
 
 export const getListContacts = async (req, res, next) => {
-  const data = await Contact.find();
+  const { _id: owner } = req.user;
+  const data = await Contact.find({ owner }).populate(
+    "owner",
+    "email subscription"
+  );
   res.json(data);
 };
 
@@ -17,10 +21,11 @@ export const getContact = async (req, res, next) => {
 };
 
 export const postNewContact = async (req, res, next) => {
+  console.log(req.user);
+  const { _id: owner } = req.user;
   // const { error } = schemaAdd.validate(req.body);
   // if (error) throw HttpError(400, error.message);
-  const data = await Contact.create(req.body);
-  console.log(data);
+  const data = await Contact.create({ ...req.body, owner });
   res.status(201).json(data);
 };
 

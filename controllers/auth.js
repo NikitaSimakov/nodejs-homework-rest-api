@@ -46,7 +46,7 @@ export const logout = async (req, res) => {
   res.status(204).end();
 };
 
-export const current = async (req, res) => {
+export const getCurrent = async (req, res) => {
   const { email, subscription } = req.user;
   res.json({ email, subscription });
 };
