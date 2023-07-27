@@ -1,10 +1,12 @@
 import { HttpError } from "../helpers/HttpError.js";
+import { favoriteSchema, schemaAdd } from "../models/contact.js";
 import { Contact } from "../models/contact.js";
 
-export const getListContacts = async (req, res) => {
+export const getListContacts = async (req, res, next) => {
   const { _id: owner } = req.user;
-  const { favorite, page = 2, limit = 20 } = req.query;
+  const { favorite, page = 1, limit = 10 } = req.query;
   const skip = (page - 1) * limit;
+  console.log(skip, page, limit);
   if (favorite) {
     const data = await Contact.find({ owner, favorite: true }).populate(
       "name email phone favorite"
@@ -17,7 +19,7 @@ export const getListContacts = async (req, res) => {
   res.json(data);
 };
 
-export const getContact = async (req, res) => {
+export const getContact = async (req, res, next) => {
   const id = req.params.contactId;
   const data = await Contact.findById(id);
   if (!data) {
@@ -26,20 +28,21 @@ export const getContact = async (req, res) => {
   res.json(data);
 };
 
-export const postNewContact = async (req, res) => {
+export const postNewContact = async (req, res, next) => {
+  console.log(req.user);
   const { _id: owner } = req.user;
   const data = await Contact.create({ ...req.body, owner });
   res.status(201).json(data);
 };
 
-export const deleteContact = async (req, res) => {
+export const deleteContact = async (req, res, next) => {
   const id = req.params.contactId;
   const deleting = await Contact.deleteOne({ _id: id });
   if (!deleting) return HttpError(404, "Not found");
   return res.json({ message: "contact deleted" });
 };
 
-export const updateContact = async (req, res) => {
+export const updateContact = async (req, res, next) => {
   const id = req.params.contactId;
   const newContact = await Contact.findOneAndUpdate({ _id: id }, req.body, {
     new: true,
@@ -48,8 +51,9 @@ export const updateContact = async (req, res) => {
   return res.json(newContact);
 };
 
-export const updateStatusContact = async (req, res) => {
+export const updateStatusContact = async (req, res, next) => {
   const id = req.params.contactId;
+  console.log(req.body);
   const updateStatus = await Contact.findByIdAndUpdate(id, req.body, {
     new: true,
   });
