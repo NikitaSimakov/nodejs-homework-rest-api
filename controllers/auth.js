@@ -1,4 +1,3 @@
-// import { HttpError } from "../helpers/HttpError";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { HttpError } from "../helpers/HttpError.js";
@@ -25,7 +24,6 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
   if (!user) throw HttpError(401, "invalid email or password");
-  //   const comparePassword = await bcrypt.compare(password, user.password);
   const comparePassword = await bcrypt.compare(password, user.password);
   if (!comparePassword) throw HttpError(401, "invalid email or password");
   const payload = {
@@ -49,4 +47,11 @@ export const logout = async (req, res) => {
 export const getCurrent = async (req, res) => {
   const { email, subscription } = req.user;
   res.json({ email, subscription });
+};
+
+export const updateSubscription = async (req, res) => {
+  const { _id } = req.user;
+  const { subscription } = req.body;
+  const user = await User.findByIdAndUpdate(_id, { subscription });
+  res.json({ message: `Status was updated to ${subscription}` });
 };

@@ -44,6 +44,12 @@ export const loginSchema = Joi.object({
   password: Joi.string().min(6).required(),
 });
 
+export const subscriptionSchema = Joi.object({
+  subscription: Joi.string()
+    .valid(...subscriptionStatusList)
+    .required(),
+});
+
 userSchema.post("save", handleMongooseError);
 
 export const User = model("user", userSchema);

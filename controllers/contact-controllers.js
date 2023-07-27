@@ -1,17 +1,23 @@
 import { HttpError } from "../helpers/HttpError.js";
-import { favoriteSchema, schemaAdd } from "../models/contact.js";
 import { Contact } from "../models/contact.js";
 
-export const getListContacts = async (req, res, next) => {
+export const getListContacts = async (req, res) => {
   const { _id: owner } = req.user;
-  const data = await Contact.find({ owner }).populate(
-    "owner",
-    "email subscription"
+  const { favorite, page = 2, limit = 20 } = req.query;
+  const skip = (page - 1) * limit;
+  if (favorite) {
+    const data = await Contact.find({ owner, favorite: true }).populate(
+      "name email phone favorite"
+    );
+    return res.json(data);
+  }
+  const data = await Contact.find({ owner }, "", { skip, limit }).populate(
+    "name email phone favorite"
   );
   res.json(data);
 };
 
-export const getContact = async (req, res, next) => {
+export const getContact = async (req, res) => {
   const id = req.params.contactId;
   const data = await Contact.findById(id);
   if (!data) {
@@ -20,28 +26,21 @@ export const getContact = async (req, res, next) => {
   res.json(data);
 };
 
-export const postNewContact = async (req, res, next) => {
-  console.log(req.user);
+export const postNewContact = async (req, res) => {
   const { _id: owner } = req.user;
-  // const { error } = schemaAdd.validate(req.body);
-  // if (error) throw HttpError(400, error.message);
   const data = await Contact.create({ ...req.body, owner });
   res.status(201).json(data);
 };
 
-export const deleteContact = async (req, res, next) => {
+export const deleteContact = async (req, res) => {
   const id = req.params.contactId;
   const deleting = await Contact.deleteOne({ _id: id });
   if (!deleting) return HttpError(404, "Not found");
   return res.json({ message: "contact deleted" });
 };
 
-export const updateContact = async (req, res, next) => {
+export const updateContact = async (req, res) => {
   const id = req.params.contactId;
-
-  // const { error } = schemaAdd.validate(req.body);
-  // if (error) throw HttpError(400, "missing fields");
-
   const newContact = await Contact.findOneAndUpdate({ _id: id }, req.body, {
     new: true,
   });
@@ -49,12 +48,8 @@ export const updateContact = async (req, res, next) => {
   return res.json(newContact);
 };
 
-export const updateStatusContact = async (req, res, next) => {
+export const updateStatusContact = async (req, res) => {
   const id = req.params.contactId;
-  console.log(req.body);
-
-  // const { error } = favoriteSchema.validate(req.body);
-  // if (error) throw HttpError(400, "missing field favorite");
   const updateStatus = await Contact.findByIdAndUpdate(id, req.body, {
     new: true,
   });

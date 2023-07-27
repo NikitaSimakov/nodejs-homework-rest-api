@@ -1,8 +1,18 @@
 import express from "express";
 import { ctrlWrapper } from "../../decorators/ctrlWrapper.js";
-import { login, register, logout, getCurrent } from "../../controllers/auth.js";
+import {
+  login,
+  register,
+  logout,
+  getCurrent,
+  updateSubscription,
+} from "../../controllers/auth.js";
 import { validateBody } from "../../middlewares/validateBody.js";
-import { loginSchema, registerSchema } from "../../models/users.js";
+import {
+  loginSchema,
+  registerSchema,
+  subscriptionSchema,
+} from "../../models/users.js";
 import { handleMongooseError } from "../../helpers/handleMongooseError.js";
 import { authenticate } from "../../middlewares/authenticate.js";
 
@@ -34,4 +44,12 @@ authRouter.get(
   handleMongooseError,
   authenticate,
   ctrlWrapper(getCurrent)
+);
+
+authRouter.patch(
+  "/",
+  validateBody(subscriptionSchema),
+  authenticate,
+  handleMongooseError,
+  ctrlWrapper(updateSubscription)
 );
