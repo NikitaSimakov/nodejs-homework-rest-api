@@ -1,8 +1,12 @@
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 import bcrypt from "bcrypt";
+import fs from "fs/promises";
+import gravatar from "gravatar";
+import path from "path";
+import Jimp from "jimp";
 import { HttpError } from "../helpers/HttpError.js";
 import { User } from "../models/users.js";
-import dotenv from "dotenv";
 
 dotenv.config();
 const { SECRET_KEY } = process.env;
@@ -12,7 +16,12 @@ export const register = async (req, res) => {
   const user = await User.findOne({ email });
   if (user) throw HttpError(409, "email already in use");
   const hashPassword = await bcrypt.hash(password, 10);
-  const newUser = await User.create({ ...req.body, password: hashPassword });
+  const avatarURL = gravatar.url(email);
+  const newUser = await User.create({
+    ...req.body,
+    password: hashPassword,
+    avatarURL,
+  });
   res.status(201).json({
     email: newUser.email,
     id: newUser._id,
@@ -54,4 +63,16 @@ export const updateSubscription = async (req, res) => {
   const { subscription } = req.body;
   const user = await User.findByIdAndUpdate(_id, { subscription });
   res.json({ message: `Status was updated to ${subscription}` });
+};
+
+export const updateAvatar = async (req, res) => {
+  const avatarsDir = path.resolve("public", "avatars");
+  const { _id } = req.user;
+  const { path: oldPath, filename } = req.file;
+  const newPath = path.join(avatarsDir, filename);
+  const avatarURL = path.join("avatars", filename);
+  (await Jimp.read(oldPath)).resize(250, 250).write(newPath);
+  fs.unlink(oldPath);
+  await User.findByIdAndUpdate(_id, { avatarURL });
+  res.json({ avatarURL });
 };

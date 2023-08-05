@@ -6,6 +6,7 @@ import {
   logout,
   getCurrent,
   updateSubscription,
+  updateAvatar,
 } from "../../controllers/auth.js";
 import { validateBody } from "../../middlewares/validateBody.js";
 import {
@@ -15,6 +16,7 @@ import {
 } from "../../models/users.js";
 import { handleMongooseError } from "../../helpers/handleMongooseError.js";
 import { authenticate } from "../../middlewares/authenticate.js";
+import { upload } from "../../middlewares/upload.js";
 
 export const authRouter = express.Router();
 
@@ -52,4 +54,11 @@ authRouter.patch(
   authenticate,
   handleMongooseError,
   ctrlWrapper(updateSubscription)
+);
+
+authRouter.patch(
+  "/avatars",
+  authenticate,
+  upload.single("avatar"),
+  ctrlWrapper(updateAvatar)
 );
