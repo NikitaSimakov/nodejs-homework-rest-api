@@ -68,13 +68,11 @@ export const updateSubscription = async (req, res) => {
 export const updateAvatar = async (req, res) => {
   const avatarsDir = path.resolve("public", "avatars");
   const { _id } = req.user;
-  const { path: tempUpload, originalname } = req.file;
-  const filename = `${_id}_${originalname}`;
-  const resultUpload = path.join(avatarsDir, filename);
+  const { path: oldPath, filename } = req.file;
+  const newPath = path.join(avatarsDir, filename);
   const avatarURL = path.join("avatars", filename);
-  // await fs.rename(tempUpload, resultUpload);
-  (await Jimp.read(tempUpload)).resize(250, 250).write(resultUpload);
-  fs.unlink(tempUpload);
+  (await Jimp.read(oldPath)).resize(250, 250).write(newPath);
+  fs.unlink(oldPath);
   await User.findByIdAndUpdate(_id, { avatarURL });
   res.json({ avatarURL });
 };
