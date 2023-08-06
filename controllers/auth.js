@@ -7,6 +7,7 @@ import path from "path";
 import Jimp from "jimp";
 import { HttpError } from "../helpers/HttpError.js";
 import { User } from "../models/users.js";
+import { cloudinary } from "../helpers/cloudinary.js";
 
 dotenv.config();
 const { SECRET_KEY } = process.env;
@@ -66,13 +67,26 @@ export const updateSubscription = async (req, res) => {
 };
 
 export const updateAvatar = async (req, res) => {
-  const avatarsDir = path.resolve("public", "avatars");
+  // Вариант 1. Получаем файл из запроса в папку tmp, изменяем размер,
+  // перезаписываем в public/avatars, удаляем из tmp, записываем ссылку в MongoDB, отвечаем на запрос ссылкой на изображение
+  //
+  // const avatarsDir = path.resolve("public", "avatars");
+  // const { _id } = req.user;
+  // const { path: oldPath, filename } = req.file;
+  // const newPath = path.join(avatarsDir, filename);
+  // const avatarURL = path.join("avatars", filename);
+  // (await Jimp.read(oldPath)).resize(250, 250).write(newPath);
+  // fs.unlink(oldPath);
+  // await User.findByIdAndUpdate(_id, { avatarURL });
+  // res.json({ avatarURL });
+  // Вариант 2. получаем файл из запроса в папку tmp, загружаем в cloudinary, в ответ получаем объект который содержит URL,
+  // URL записываем в MongoDB, удаляем файл из tmp, в ответ на запрос отправляем URL
+  const { path } = req.file;
   const { _id } = req.user;
-  const { path: oldPath, filename } = req.file;
-  const newPath = path.join(avatarsDir, filename);
-  const avatarURL = path.join("avatars", filename);
-  (await Jimp.read(oldPath)).resize(250, 250).write(newPath);
-  fs.unlink(oldPath);
+  const { url: avatarURL } = await cloudinary.uploader.upload(path, {
+    folder: "avatars",
+  });
   await User.findByIdAndUpdate(_id, { avatarURL });
+  fs.unlink(path);
   res.json({ avatarURL });
 };
