@@ -27,6 +27,8 @@ const userSchema = new Schema(
       default: null,
     },
     avatarURL: { type: String, required: [true, "Set avatar for user"] },
+    verify: { type: Boolean, default: false },
+    verificationToken: { type: String, default: "" },
   },
   { versionKey: false }
 );
@@ -49,6 +51,10 @@ export const subscriptionSchema = Joi.object({
   subscription: Joi.string()
     .valid(...subscriptionStatusList)
     .required(),
+});
+
+export const emailSchema = Joi.object({
+  email: Joi.string().required().pattern(emailRegexp),
 });
 
 userSchema.post("save", handleMongooseError);

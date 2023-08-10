@@ -7,11 +7,12 @@ import {
   updateContact,
   updateStatusContact,
 } from "../../controllers/contact-controllers.js";
-import { isValidId } from "../../middlewares/IsValidId.js";
 import { ctrlWrapper } from "../../decorators/ctrlWrapper.js";
 import { validateBody } from "../../middlewares/validateBody.js";
 import { favoriteSchema, schemaAdd } from "../../models/contact.js";
 import { authenticate } from "../../middlewares/authenticate.js";
+import { isIdValid } from "../../middlewares/IsValidId.js";
+// import { isValidId } from "../../middlewares/IsValidId.js";
 
 export const contactsRouter = express.Router();
 
@@ -20,7 +21,7 @@ contactsRouter.get("/", authenticate, ctrlWrapper(getListContacts));
 contactsRouter.get(
   "/:contactId",
   authenticate,
-  isValidId,
+  isIdValid,
   ctrlWrapper(getContact)
 );
 
@@ -34,14 +35,14 @@ contactsRouter.post(
 contactsRouter.delete(
   "/:contactId",
   authenticate,
-  isValidId,
+  isIdValid,
   ctrlWrapper(deleteContact)
 );
 
 contactsRouter.put(
   "/:contactId",
   authenticate,
-  isValidId,
+  isIdValid,
   validateBody(schemaAdd),
   ctrlWrapper(updateContact)
 );
@@ -49,7 +50,7 @@ contactsRouter.put(
 contactsRouter.patch(
   "/:contactId/favorite",
   authenticate,
-  isValidId,
+  isIdValid,
   validateBody(favoriteSchema),
   ctrlWrapper(updateStatusContact)
 );
