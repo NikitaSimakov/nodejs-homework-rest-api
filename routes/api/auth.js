@@ -1,15 +1,15 @@
 import express from "express";
 import { ctrlWrapper } from "../../decorators/ctrlWrapper.js";
 import {
-  login,
   register,
+  login,
   logout,
   getCurrent,
   updateSubscription,
   updateAvatar,
   sendVerifyEmail,
   resendVerifyEmail,
-} from "../../controllers/auth.js";
+} from "../../controllers/auth/index.js";
 import { validateBody } from "../../middlewares/validateBody.js";
 import {
   emailSchema,

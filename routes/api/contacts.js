@@ -6,7 +6,7 @@ import {
   postNewContact,
   updateContact,
   updateStatusContact,
-} from "../../controllers/contact-controllers.js";
+} from "../../controllers/contacts/index.js";
 import { ctrlWrapper } from "../../decorators/ctrlWrapper.js";
 import { validateBody } from "../../middlewares/validateBody.js";
 import { favoriteSchema, schemaAdd } from "../../models/contact.js";
