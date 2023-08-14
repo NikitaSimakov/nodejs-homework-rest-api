@@ -8,7 +8,7 @@ import Jimp from "jimp";
 import { HttpError } from "../helpers/HttpError.js";
 import { User } from "../models/users.js";
 import { nanoid } from "nanoid";
-import { sendVerificationEmail } from "../helpers/sendVerificationEmail.js";
+import { sendVerificationEmail } from "../services/email/sendVerificationEmail.js";
 
 dotenv.config();
 const { SECRET_KEY, BASE_URL } = process.env;
@@ -44,9 +44,8 @@ export const register = async (req, res) => {
   });
 };
 
-export const verifyEmail = async (req, res) => {
+export const sendVerifyEmail = async (req, res) => {
   const { verificationToken } = req.params;
-  // const code = await User.findOne({ verificationToken });
   const user = await User.findOneAndUpdate(
     { verificationToken },
     { verify: true, verificationToken: "" }
