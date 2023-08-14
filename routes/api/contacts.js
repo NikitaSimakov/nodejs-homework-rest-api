@@ -12,7 +12,6 @@ import { validateBody } from "../../middlewares/validateBody.js";
 import { favoriteSchema, schemaAdd } from "../../models/contact.js";
 import { authenticate } from "../../middlewares/authenticate.js";
 import { isIdValid } from "../../middlewares/IsValidId.js";
-// import { isValidId } from "../../middlewares/IsValidId.js";
 
 export const contactsRouter = express.Router();
 

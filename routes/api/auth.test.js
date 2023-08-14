@@ -3,7 +3,6 @@ import "dotenv/config";
 import request from "supertest";
 
 import { app } from "../../app.js";
-import { User } from "../../models/users.js";
 
 const { DB_HOST_TEST, PORT } = process.env;
 
