@@ -7,7 +7,7 @@ import {
   getCurrent,
   updateSubscription,
   updateAvatar,
-  verifyEmail,
+  sendVerifyEmail,
   resendVerifyEmail,
 } from "../../controllers/auth.js";
 import { validateBody } from "../../middlewares/validateBody.js";
@@ -29,7 +29,7 @@ authRouter.post(
   handleMongooseError,
   ctrlWrapper(register)
 );
-authRouter.get("/verify/:verificationToken", ctrlWrapper(verifyEmail));
+authRouter.get("/verify/:verificationToken", ctrlWrapper(sendVerifyEmail));
 authRouter.post(
   "/verify",
   validateBody(emailSchema),
